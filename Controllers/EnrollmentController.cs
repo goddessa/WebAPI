@@ -16,7 +16,7 @@ public class EnrollmentController : ControllerBase
     {
         Context = context;
     }
-
+    //CRUD for Enrollment
     //CREATE  
     [HttpPost("AddEnrollment")]
     public async Task<IActionResult> AddEnrollment([FromBody] Enrollment enrollment)
@@ -48,128 +48,127 @@ public class EnrollmentController : ControllerBase
         }
     }
 
-//GET ENROLLMENTBY ID: COURSEID OR STUDENTID
-
-[HttpGet("GetEnrollments")]
-public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments(int? courseId = null, int? studentId = null)
-{
-    var enrollmentsQuery = Context.Enrollments.AsQueryable();
-
-    if (courseId != null)
+    //Get enrollment ako prosledimo id kursa ili id studenta, bilo koje od ta 2
+    [HttpGet("GetEnrollments")]
+    public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments(int? courseId = null, int? studentId = null)
     {
-        enrollmentsQuery = enrollmentsQuery.Where(e => e.CourseId == courseId);
-    }
+        var enrollmentsQuery = Context.Enrollments.AsQueryable();
 
-    if (studentId != null)
-    {
-        enrollmentsQuery = enrollmentsQuery.Where(e => e.StudentId == studentId);
-    }
-
-    var enrollments = await enrollmentsQuery
-        .Include(e => e.Course)
-        .Include(e => e.Student)
-        .ToListAsync();
-
-    var jsonOptions = new JsonSerializerOptions
-    {
-        ReferenceHandler = ReferenceHandler.Preserve
-    };
-
-    var serializedEnrollments = JsonSerializer.Serialize(enrollments, jsonOptions);
-
-    return Ok(serializedEnrollments);
-}
-
-//GET SAMO TABELU ENROLLMENTS
-[HttpGet]
-[Produces("application/json")]
-public IActionResult GetEnrollments()
-{
-    var enrollments = Context.Enrollments
-        .Include(e => e.Student)
-        .Include(e => e.Course)
-        .ToList();
-        
-    return Ok(enrollments);
-}
-
-//GET ZA PROSLEĐENI ID
-[HttpGet("Student/{studentId}/Courses")]
-public IActionResult GetStudentCourses(int studentId)
-{
-    var studentCourses = Context.Enrollments
-        .Include(e => e.Course)
-        .Where(e => e.StudentId == studentId)
-        .Select(e => e.Course)
-        .ToList();
-        
-    return Ok(studentCourses);
-}
-
-//Get sve studente na kursu
-[HttpGet("Course/{courseId}/Students")]
-public IActionResult GetCourseStudents(int courseId)
-{
-    var courseStudents = Context.Enrollments
-        .Include(e => e.Student)
-        .Where(e => e.CourseId == courseId)
-        .Select(e => e.Student)
-        .ToList();
-        
-    return Ok(courseStudents);
-}
-
-
-//UPDATE
-[HttpPut("UpdateEnrollment")]
-public async Task<IActionResult> UpdateEnrollment([FromBody] Enrollment enrollment)
-{
-    try
-    {
-        var existingEnrollment = await Context.Enrollments.FindAsync(enrollment.Id);
-
-        if (existingEnrollment == null)
+        if (courseId != null)
         {
-            return NotFound($"Enrollment with ID {enrollment.Id} not found.");
+            enrollmentsQuery = enrollmentsQuery.Where(e => e.CourseId == courseId);
         }
 
-        existingEnrollment.StudentId = enrollment.StudentId;
-        existingEnrollment.CourseId = enrollment.CourseId;
-        existingEnrollment.Mark = enrollment.Mark;
-
-        await Context.SaveChangesAsync();
-
-        return Ok($"Enrollment with ID {enrollment.Id} updated.");
-    }
-    catch (Exception e)
-    {
-        return BadRequest(e.Message);
-    }
-}
-
-//DELETE
-[HttpDelete("DeleteEnrollment/{enrollmentId}")]
-public async Task<IActionResult> DeleteEnrollment(int enrollmentId)
-{
-    try
-    {
-        var enrollment = await Context.Enrollments.FindAsync(enrollmentId);
-
-        if (enrollment == null)
+        if (studentId != null)
         {
-            return NotFound($"Enrollment with ID {enrollmentId} not found.");
+            enrollmentsQuery = enrollmentsQuery.Where(e => e.StudentId == studentId);
         }
 
-        Context.Enrollments.Remove(enrollment);
-        await Context.SaveChangesAsync();
+        var enrollments = await enrollmentsQuery
+            .Include(e => e.Course)
+            .Include(e => e.Student)
+            .ToListAsync();
 
-        return Ok($"Enrollment with ID {enrollmentId} deleted.");
+        var jsonOptions = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.Preserve
+        };
+
+        var serializedEnrollments = JsonSerializer.Serialize(enrollments, jsonOptions);
+
+        return Ok(serializedEnrollments);
     }
-    catch (Exception e)
+
+    //Get sve enrollments
+    [HttpGet]
+    [Produces("application/json")]
+    public IActionResult GetEnrollments()
     {
-        return BadRequest(e.Message);
+        var enrollments = Context.Enrollments
+            .Include(e => e.Student)
+            .Include(e => e.Course)
+            .ToList();
+        
+        return Ok(enrollments);
     }
-}
+
+    //Get kurseve za 1 studenta
+    [HttpGet("Student/{studentId}/Courses")]
+    public IActionResult GetStudentCourses(int studentId)
+    {
+        var studentCourses = Context.Enrollments
+            .Include(e => e.Course)
+            .Where(e => e.StudentId == studentId)
+            .Select(e => e.Course)
+            .ToList();
+        
+        return Ok(studentCourses);
+    }
+
+    //Get sve studente na kursu
+    [HttpGet("Course/{courseId}/Students")]
+    public IActionResult GetCourseStudents(int courseId)
+    {
+        var courseStudents = Context.Enrollments
+            .Include(e => e.Student)
+            .Where(e => e.CourseId == courseId)
+            .Select(e => e.Student)
+            .ToList();
+        
+        return Ok(courseStudents);
+    }
+
+
+    //UPDATE
+    [HttpPut("UpdateEnrollment")]
+    public async Task<IActionResult> UpdateEnrollment([FromBody] Enrollment enrollment)
+    {
+        try
+        {
+            var existingEnrollment = await Context.Enrollments.FindAsync(enrollment.Id);
+
+            if (existingEnrollment == null)
+            {
+                return NotFound($"Enrollment with ID {enrollment.Id} not found.");
+            }
+
+            existingEnrollment.StudentId = enrollment.StudentId;
+            existingEnrollment.CourseId = enrollment.CourseId;
+            existingEnrollment.Mark = enrollment.Mark;
+
+            await Context.SaveChangesAsync();
+
+            return Ok($"Enrollment with ID {enrollment.Id} updated.");
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    //DELETE
+    [HttpDelete("DeleteEnrollment/{enrollmentId}")]
+    public async Task<IActionResult> DeleteEnrollment(int enrollmentId)
+    {
+        try
+        {
+            var enrollment = await Context.Enrollments.FindAsync(enrollmentId);
+
+            if (enrollment == null)
+            {
+                return NotFound($"Enrollment with ID {enrollmentId} not found.");
+            }
+
+            Context.Enrollments.Remove(enrollment);
+            await Context.SaveChangesAsync();
+
+            return Ok($"Enrollment with ID {enrollmentId} deleted.");
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 
 
 

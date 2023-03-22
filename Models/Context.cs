@@ -22,7 +22,7 @@ public class Context : DbContext
             entity.HasKey(e => e.Id);
             entity.HasOne<Student>(e => e.Student).WithMany(student => student.Enrollments).HasForeignKey(e => e.StudentId);
             entity.HasOne<Course>(e => e.Course).WithMany(course => course.Enrollments).HasForeignKey(e => e.CourseId);
-
+            //many to many relation
         });
         
     }
