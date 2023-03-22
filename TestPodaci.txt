@@ -1,0 +1,94 @@
+{
+    "id": 1,
+    "code": "2OER1O01",
+    "name": "Angular 7",
+    "description": "Stigao novi framework",
+    "students": null,
+    "marks": null
+  },
+  {
+    "id": 2,
+    "code": "2OER1O02",
+    "name": "ASP .NET MVC",
+    "description": "Novi framework .NET-a",
+    "students": null,
+    "marks": null
+  },
+  {
+    "id": 3,
+    "code": "2OER1O03",
+    "name": "Math 1",
+    "description": "Matematika 1",
+    "students": null,
+    "marks": null
+  },
+  {
+    "id": 4,
+    "code": "2OER1O04",
+    "name": "English 1",
+    "description": "Engleski jezik 1",
+    "students": null,
+    "marks": null
+  },
+  {
+    "id": 5,
+    "code": "2OER1O05",
+    "name": "Graphics",
+    "description": "Računarska grafika",
+    "students": null,
+    "marks": null
+  },
+  {
+    "id": 6,
+    "code": "2OER1O06",
+    "name": "React.js",
+    "description": "Novi Javascript framework",
+    "students": null,
+    "marks": null
+  }
+
+  ****
+  {
+    "id": 1,
+    "firstName": "Marko",
+    "lastName": "Marković",
+    "address": "Njegoševa 5",
+    "city": "Beograd",
+    "country": "Srbija",
+    "dateOfBirth": "1995-05-15T00:00:00",
+    "marks": null
+  },
+  {
+    "id": 2,
+    "firstName": "Milica",
+    "lastName": "Savić",
+    "address": "Generala Milojka Lešjanna 51/49",
+    "city": "Niš",
+    "country": "Srbija",
+    "dateOfBirth": "1996-01-14T00:00:00",
+    "marks": null
+  },
+  {
+    "id": 3,
+    "firstName": "Marija",
+    "lastName": "Savić",
+    "address": "Generala Milojka Lešjanna 51/49",
+    "city": "Niš",
+    "country": "Srbija",
+    "dateOfBirth": "1998-12-02T00:00:00",
+    "marks": null
+  }
+  
+  **
+  {
+  "studentId": 5,
+  "courseId": 3,
+  "mark": 10
+}
+
+{
+  "id": 2,
+  "studentId": 4,
+  "courseId": 1,
+  "mark": 7
+}
