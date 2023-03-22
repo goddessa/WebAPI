@@ -99,11 +99,11 @@ public class StudentController : ControllerBase
             {
                 Context.Students.Remove(emp);
                 await Context.SaveChangesAsync();
-                return Ok($"ID of deleted employee is: {IdStudent}");
+                return Ok($"ID of deleted student is: {IdStudent}");
             }
             else
             {
-                return BadRequest($"Not found employee with ID : {IdStudent}");
+                return BadRequest($"Not found student with ID : {IdStudent}");
             }
         }
         catch(Exception e)
