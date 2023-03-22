@@ -49,8 +49,8 @@ public class EnrollmentController : ControllerBase
     }
 
     //Get enrollment ako prosledimo id kursa ili id studenta, bilo koje od ta 2
-    [HttpGet("GetEnrollments")]
-    public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollments(int? courseId = null, int? studentId = null)
+    [HttpGet("GetEnrollmentsByIds")]
+    public async Task<ActionResult<IEnumerable<Enrollment>>> GetEnrollmentsByIds(int? courseId = null, int? studentId = null)
     {
         var enrollmentsQuery = Context.Enrollments.AsQueryable();
 
@@ -120,16 +120,21 @@ public class EnrollmentController : ControllerBase
 
 
     //UPDATE
-    [HttpPut("UpdateEnrollment")]
-    public async Task<IActionResult> UpdateEnrollment([FromBody] Enrollment enrollment)
+    [HttpPut("UpdateEnrollment/{id}")]
+    public async Task<IActionResult> UpdateEnrollment(int id, [FromBody] Enrollment enrollment)
     {
         try
         {
-            var existingEnrollment = await Context.Enrollments.FindAsync(enrollment.Id);
+            if (id != enrollment.Id)
+            {
+                return BadRequest("Enrollment ID does not match.");
+            }
+
+            var existingEnrollment = await Context.Enrollments.FindAsync(id);
 
             if (existingEnrollment == null)
             {
-                return NotFound($"Enrollment with ID {enrollment.Id} not found.");
+                return NotFound($"Enrollment with ID {id} not found.");
             }
 
             existingEnrollment.StudentId = enrollment.StudentId;
@@ -138,13 +143,14 @@ public class EnrollmentController : ControllerBase
 
             await Context.SaveChangesAsync();
 
-            return Ok($"Enrollment with ID {enrollment.Id} updated.");
+            return Ok($"Enrollment with ID {id} updated.");
         }
         catch (Exception e)
         {
             return BadRequest(e.Message);
         }
     }
+
 
     //DELETE
     [HttpDelete("DeleteEnrollment/{enrollmentId}")]
