@@ -6,26 +6,25 @@ public class Context : DbContext
     public DbSet<Student> Students { get; set; }
     public DbSet<Course> Courses { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
-    public DbSet<Mark> Marks { get; set; }
 
     public Context(DbContextOptions<Context> options) : base(options)
     {
     }
+    public void ConfigureServices(IServiceCollection services)
+        => services.AddDbContext<Context>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-         modelBuilder.Entity<Enrollment>()
-        .HasKey(e => e.Id);
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Enrollment>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne<Student>(e => e.Student).WithMany(student => student.Enrollments).HasForeignKey(e => e.StudentId);
+            entity.HasOne<Course>(e => e.Course).WithMany(course => course.Enrollments).HasForeignKey(e => e.CourseId);
 
-    modelBuilder.Entity<Enrollment>()
-        .HasOne(e => e.Student)
-        .WithMany()
-        .HasForeignKey(e => e.StudentId);
-
-    modelBuilder.Entity<Enrollment>()
-        .HasOne(e => e.Course)
-        .WithMany()
-        .HasForeignKey(e => e.CourseId);
+        });
+        
     }
     
 }

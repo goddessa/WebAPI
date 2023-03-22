@@ -19,11 +19,18 @@ public class CourseController : ControllerBase
     [HttpPost("AddCourse")]
     public async Task<ActionResult> AddCourse([FromBody]Course course)
     {
-
         try
         {
+            var existingCourse = await Context.Courses.FirstOrDefaultAsync(c => c.Code == course.Code);
+
+            if (existingCourse != null)
+            {
+                return BadRequest($"Course with code '{course.Code}' already exists.");
+            }
+
             await Context.Courses.AddAsync(course);
             await Context.SaveChangesAsync();
+
             return Ok($"ID of new course is: {course.ID}");
         }
         catch(Exception e)
@@ -31,6 +38,7 @@ public class CourseController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
 
     //READ
     [HttpGet("GetCourses")]

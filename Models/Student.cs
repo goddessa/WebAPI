@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Models;
 
@@ -12,5 +13,6 @@ public class Student
     public required string City { get; set; }
     public required string Country { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public List<Enrollment>? Enrollments { get; set; }
+    [JsonIgnore]
+    public ICollection<Enrollment>? Enrollments { get; set; }
 }
